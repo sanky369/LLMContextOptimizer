@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Context Optimizer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 8px;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .result pre {
+            background: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Context Optimizer</h1>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.text.label }}
+                {{ form.text }}
+            </div>
+            <div class="options">
+                <div class="checkbox-group">
+                    {{ form.use_compression }}
+                    {{ form.use_compression.label }}
+                </div>
+                <div class="checkbox-group">
+                    {{ form.use_abbreviations }}
+                    {{ form.use_abbreviations.label }}
+                </div>
+                <div class="checkbox-group">
+                    {{ form.use_base64 }}
+                    {{ form.use_base64.label }}
+                </div>
+                <div class="checkbox-group">
+                    {{ form.optimize_tokens }}
+                    {{ form.optimize_tokens.label }}
+                </div>
+                <div class="form-group">
+                    {{ form.structure_format.label }}
+                    {{ form.structure_format }}
+                </div>
+            </div>
+            {{ form.submit }}
+        </form>
+        
+        {% if result %}
+        <div class="result">
+            <h3>Optimization Result:</h3>
+            <pre>{{ result | tojson(indent=2) }}</pre>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
