@@ -26,6 +26,8 @@ class OptimizationForm(FlaskForm):
                                          ('xml', 'XML')],
                                  default='none')
     optimize_tokens = BooleanField('Optimize Tokens', default=True)
+    minify_code = BooleanField('Minify Code', default=False)
+    use_pseudo_urls = BooleanField('Use Pseudo-URLs', default=False)
     submit = SubmitField('Optimize')
 
 @app.route('/', methods=['GET', 'POST'])
@@ -48,7 +50,9 @@ def index():
                     use_abbreviations=form.use_abbreviations.data,
                     use_base64=form.use_base64.data,
                     structure_format=structure_format,
-                    optimize_tokens=form.optimize_tokens.data
+                    optimize_tokens=form.optimize_tokens.data,
+                    minify_code=form.minify_code.data,
+                    use_pseudo_urls=form.use_pseudo_urls.data
                 )
             else:
                 error = "Invalid form submission. Please check your input."

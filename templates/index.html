@@ -306,6 +306,18 @@
                     <p><strong>Best for:</strong> Data that needs to be parsed or has hierarchical relationships.</p>
                     <p><strong>Example:</strong> Converting text to JSON with defined keys and values.</p>
                 </div>
+                <div class="help-item">
+                    <h4>Minify Code</h4>
+                    <p>Reduces code size by removing comments, whitespace, and using shorter variable names.</p>
+                    <p><strong>Best for:</strong> Code snippets and programming examples.</p>
+                    <p><strong>Example:</strong> "def function(x):" → "def f(x):"</p>
+                </div>
+                <div class="help-item">
+                    <h4>Use Pseudo-URLs</h4>
+                    <p>Replaces long phrases with URL-like references for better token efficiency.</p>
+                    <p><strong>Best for:</strong> Technical documents with repeated concepts.</p>
+                    <p><strong>Example:</strong> "context window size" → "#ref:llm/context_size"</p>
+                </div>
             </div>
         </div>
 
@@ -333,6 +345,14 @@
                 <div class="checkbox-group">
                     {{ form.optimize_tokens }}
                     {{ form.optimize_tokens.label }}
+                </div>
+                <div class="checkbox-group">
+                    {{ form.minify_code }}
+                    {{ form.minify_code.label }}
+                </div>
+                <div class="checkbox-group">
+                    {{ form.use_pseudo_urls }}
+                    {{ form.use_pseudo_urls.label }}
                 </div>
                 <div class="form-group">
                     {{ form.structure_format.label }}
