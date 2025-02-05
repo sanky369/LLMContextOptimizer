@@ -84,6 +84,8 @@
             padding: 15px;
             border-radius: 4px;
             overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
         .result h3 {
             margin-top: 0;
@@ -105,7 +107,28 @@
             border-radius: 4px;
             background-color: #d1ecf1;
         }
+        #charCount {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
     </style>
+    <script>
+        function updateCharCount() {
+            const textarea = document.querySelector('textarea');
+            const charCount = document.getElementById('charCount');
+            const maxSize = 16 * 1024 * 1024; // 16MB
+            const currentSize = new Blob([textarea.value]).size;
+
+            charCount.textContent = `Size: ${(currentSize / 1024 / 1024).toFixed(2)}MB / 16MB`;
+
+            if (currentSize > maxSize) {
+                charCount.style.color = '#dc3545';
+            } else {
+                charCount.style.color = '#6c757d';
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -119,11 +142,12 @@
             Note: Maximum input size is 16MB. For larger texts, please consider splitting them into smaller chunks.
         </div>
 
-        <form method="POST">
+        <form method="POST" onsubmit="return confirm('Process this text with the selected optimization options?')">
             {{ form.csrf_token }}
             <div class="form-group">
                 {{ form.text.label }}
-                {{ form.text }}
+                {{ form.text(oninput="updateCharCount()") }}
+                <div id="charCount">Size: 0MB / 16MB</div>
             </div>
             <div class="options">
                 <div class="checkbox-group">
