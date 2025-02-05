@@ -46,7 +46,7 @@ CLI options:
 
 ### API Integration
 
-The LLM Context Optimizer provides a RESTful API for integration with other applications. 
+The LLM Context Optimizer provides a RESTful API for integration with other applications. For detailed API documentation, please see [API Documentation](docs/api.md).
 
 Quick start example:
 ```bash
