@@ -129,39 +129,6 @@
             display: none;
         }
         .help-section {
-            margin-bottom: 20px;
-        }
-        .help-section h3 {
-            margin-top: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .help-section .help-toggle {
-            background: #007bff;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .help-section .help-content {
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .help-item {
-            margin-bottom: 15px;
-        }
-        .help-item h4 {
-            margin-top: 0;
-            color: #333;
-        }
-
-        /* New styles from edited snippet */
-        .help-section {
             margin: 20px 0;
             padding: 15px;
             background: #f8f9fa;
@@ -208,6 +175,26 @@
         .help-item strong {
             color: #495057;
         }
+
+        /* New styles from edited snippet */
+        .copy-btn {
+            float: right;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
     </style>
     <script>
         function updateCharCount() {
@@ -252,6 +239,25 @@
             } else {
                 helpContent.style.display = 'none';
             }
+        }
+
+        function copyResult() {
+            const resultText = document.getElementById('result-text');
+            const textToCopy = resultText.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = '#218838';
+
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '#28a745';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text:', err);
+            });
         }
     </script>
 </head>
@@ -338,8 +344,8 @@
 
         {% if result %}
         <div class="result">
-            <h3>Optimization Result:</h3>
-            <pre>{{ result | tojson(indent=2) }}</pre>
+            <h3>Optimization Result: <button onclick="copyResult()" class="copy-btn">Copy Output</button></h3>
+            <pre id="result-text">{{ result | tojson(indent=2) }}</pre>
         </div>
         {% endif %}
     </div>

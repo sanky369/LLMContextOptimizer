@@ -1,11 +1,9 @@
-from typing import Dict, Any, Optional, Union
-from optimizers import (
-    TextCompressor,
-    StructureConverter,
-    Encoders,
-    Abbreviator,
-    TokenOptimizer
-)
+from typing import Dict, Any, Optional
+from optimizers.text_compressor import TextCompressor
+from optimizers.structure_converter import StructureConverter
+from optimizers.encoders import Encoders
+from optimizers.abbreviator import Abbreviator
+from optimizers.token_optimizer import TokenOptimizer
 
 class LLMContextOptimizer:
     """Main class for optimizing context for LLMs"""
@@ -23,7 +21,9 @@ class LLMContextOptimizer:
                 use_abbreviations: bool = True,
                 use_base64: bool = False,
                 structure_format: Optional[str] = None,
-                optimize_tokens: bool = True) -> Dict[str, Any]:
+                optimize_tokens: bool = True,
+                minify_code: bool = False,
+                use_pseudo_urls: bool = False) -> Dict[str, Any]:
         """
         Optimize text using multiple strategies
         Returns a dictionary with original and optimized versions
@@ -36,11 +36,22 @@ class LLMContextOptimizer:
             current_text = self.text_compressor.remove_redundancies(current_text)
             result["compressed"] = current_text
 
+        # Apply code minification
+        if minify_code and any(keyword in current_text.lower() for keyword in ['def ', 'class ', 'return']):
+            minified = self.text_compressor.minify_code(current_text)
+            current_text = minified
+            result["minified_code"] = minified
+
+        # Apply pseudo-URL references
+        if use_pseudo_urls:
+            with_refs = self.text_compressor.pseudo_url_references(current_text)
+            current_text = with_refs
+            result["with_references"] = with_refs
+
         # Apply abbreviations
         if use_abbreviations:
             abbreviated_text, used_abbrev = self.abbreviator.abbreviate_text(current_text)
             current_text = abbreviated_text
-            # Store both the abbreviated text and the definitions
             result["abbreviated"] = {
                 "text": current_text,
                 "definitions": {full: abbr for full, abbr in used_abbrev}
