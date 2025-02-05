@@ -35,7 +35,7 @@ def index():
     if request.method == 'POST':
         if len(request.get_data()) > app.config['MAX_CONTENT_LENGTH']:
             return render_template('index.html',
-                                form=OptimizationForm(),
+                                form=form,
                                 error="Input size exceeds 16MB limit. Please reduce the text size."), 413
 
         if form.validate_on_submit():
