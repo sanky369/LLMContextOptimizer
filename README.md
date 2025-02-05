@@ -1,34 +1,3 @@
-# LLM Context Optimizer
-
-A Python-based utility for optimizing and compressing context delivery to Large Language Models (LLMs), featuring advanced text processing capabilities and a web interface.
-
-## Features
-
-- **Multiple Optimization Strategies**:
-  - Text compression and redundancy removal
-  - Token optimization for efficient LLM processing
-  - Abbreviation handling with definition mapping
-  - Code minification for embedded code blocks
-  - Pseudo-URL references for technical concepts
-  - Base64 encoding support
-  - Structured output formats (JSON/XML)
-
-- **Web Interface**:
-  - User-friendly UI for text optimization
-  - Real-time size tracking
-  - Multiple optimization options
-  - Copy-to-clipboard functionality
-  - Detailed help documentation
-
-- **CLI Support**:
-  - Command-line interface for batch processing
-  - Support for file input/output
-  - Multiple output format options
-
-## Installation
-
-1. Clone the repository:
-```bash
 git clone [repository-url]
 cd llm-context-optimizer
 ```
@@ -61,15 +30,16 @@ Process from file:
 python cli.py input.txt --output result.json --structure json
 ```
 
-## API Reference
+## API Documentation
 
-### REST API
+### REST API Endpoint
 
-Endpoint: `/api/optimize`
-Method: `POST`
-Content-Type: `application/json`
+- **URL**: `/api/optimize`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
 
-Request body:
+#### Request Body Options:
+
 ```json
 {
   "text": "Your text to optimize",
@@ -83,7 +53,10 @@ Request body:
 }
 ```
 
-Response:
+All options are optional except `text`. Default values shown above.
+
+#### Response Format:
+
 ```json
 {
   "original": "Original text",
@@ -94,26 +67,47 @@ Response:
       "original phrase": "abbreviation"
     }
   },
+  "minified_code": "Minified version of code blocks",
+  "with_references": "Text with pseudo-URL references",
   "token_optimized": "Token optimized text",
   "structured": "{...}",
+  "base64": "Base64 encoded text",
   "semantic_hash": "CTX_123"
 }
 ```
 
-## Configuration
+#### Example cURL Request:
 
-- Maximum input size: 16MB
-- Supported output formats: JSON, XML
-- Server host: 0.0.0.0
-- Default port: 3000
+```bash
+curl -X POST http://localhost:3000/api/optimize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "The natural language processing model uses deep learning techniques.",
+    "use_compression": true,
+    "use_abbreviations": true,
+    "structure_format": "json"
+  }'
+```
 
-## Development
+#### Example Response:
 
-- Python 3.x
-- Flask for web interface
-- Regular expressions for text processing
-- Modular architecture for easy extension
-
-## License
-
-MIT License (See LICENSE file for details)
+```json
+{
+  "original": "The natural language processing model uses deep learning techniques.",
+  "compressed": "natural language processing model uses deep learning techniques",
+  "abbreviated": {
+    "text": "NLP model uses DL techniques",
+    "definitions": {
+      "natural language processing": "NLP",
+      "deep learning": "DL"
+    }
+  },
+  "structured": {
+    "ctx": {
+      "topic": "context_optimization",
+      "keywords": ["NLP", "model", "uses", "DL", "techniques"],
+      "content": "NLP model uses DL techniques"
+    }
+  },
+  "semantic_hash": "CTX_789"
+}
