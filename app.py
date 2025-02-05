@@ -33,6 +33,7 @@ def index():
     error = None
 
     if request.method == 'POST':
+        # Check request size before processing form
         if len(request.get_data()) > app.config['MAX_CONTENT_LENGTH']:
             return render_template('index.html',
                                 form=form,

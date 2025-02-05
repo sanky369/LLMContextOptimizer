@@ -73,6 +73,10 @@
         button:hover {
             background: #0056b3;
         }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
         .result {
             margin-top: 30px;
             padding: 20px;
@@ -112,11 +116,25 @@
             font-size: 0.9em;
             margin-top: 5px;
         }
+        #submitBtn {
+            position: relative;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
     </style>
     <script>
         function updateCharCount() {
             const textarea = document.querySelector('textarea');
             const charCount = document.getElementById('charCount');
+            const submitBtn = document.getElementById('submitBtn');
+            const warningDiv = document.getElementById('sizeWarning');
             const maxSize = 16 * 1024 * 1024; // 16MB
             const currentSize = new Blob([textarea.value]).size;
 
@@ -124,9 +142,27 @@
 
             if (currentSize > maxSize) {
                 charCount.style.color = '#dc3545';
+                submitBtn.disabled = true;
+                warningDiv.style.display = 'block';
+                warningDiv.textContent = 'Text size exceeds 16MB limit. Please reduce the text size or split into smaller chunks.';
             } else {
                 charCount.style.color = '#6c757d';
+                submitBtn.disabled = false;
+                warningDiv.style.display = 'none';
             }
+        }
+
+        function validateForm() {
+            const textarea = document.querySelector('textarea');
+            const maxSize = 16 * 1024 * 1024; // 16MB
+            const currentSize = new Blob([textarea.value]).size;
+
+            if (currentSize > maxSize) {
+                alert('Text size exceeds 16MB limit. Please reduce the text size or split into smaller chunks.');
+                return false;
+            }
+
+            return confirm('Process this text with the selected optimization options?');
         }
     </script>
 </head>
@@ -142,12 +178,13 @@
             Note: Maximum input size is 16MB. For larger texts, please consider splitting them into smaller chunks.
         </div>
 
-        <form method="POST" onsubmit="return confirm('Process this text with the selected optimization options?')">
+        <form method="POST" onsubmit="return validateForm()">
             {{ form.csrf_token }}
             <div class="form-group">
                 {{ form.text.label }}
                 {{ form.text(oninput="updateCharCount()") }}
                 <div id="charCount">Size: 0MB / 16MB</div>
+                <div id="sizeWarning" class="warning"></div>
             </div>
             <div class="options">
                 <div class="checkbox-group">
@@ -171,7 +208,7 @@
                     {{ form.structure_format }}
                 </div>
             </div>
-            {{ form.submit }}
+            {{ form.submit(id="submitBtn") }}
         </form>
 
         {% if result %}
