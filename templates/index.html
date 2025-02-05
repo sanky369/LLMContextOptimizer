@@ -89,11 +89,36 @@
             margin-top: 0;
             color: #333;
         }
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #dc3545;
+            border-radius: 4px;
+            background-color: #f8d7da;
+        }
+        .info {
+            color: #0c5460;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #0c5460;
+            border-radius: 4px;
+            background-color: #d1ecf1;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>LLM Context Optimizer</h1>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div class="info">
+            Note: Maximum input size is 16MB. For larger texts, please consider splitting them into smaller chunks.
+        </div>
+
         <form method="POST">
             {{ form.csrf_token }}
             <div class="form-group">
@@ -124,7 +149,7 @@
             </div>
             {{ form.submit }}
         </form>
-        
+
         {% if result %}
         <div class="result">
             <h3>Optimization Result:</h3>
