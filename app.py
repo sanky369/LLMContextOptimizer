@@ -8,6 +8,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # For CSRF protection
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Set max content size to 16MB
 app.config['WTF_CSRF_ENABLED'] = True
+# Configure request parser
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB for form data
 
 class OptimizationForm(FlaskForm):
     text = TextAreaField('Input Text', 
@@ -20,8 +22,8 @@ class OptimizationForm(FlaskForm):
     use_base64 = BooleanField('Use Base64 Encoding', default=False)
     structure_format = SelectField('Structure Format', 
                                  choices=[('none', 'None'), 
-                                        ('json', 'JSON'), 
-                                        ('xml', 'XML')],
+                                         ('json', 'JSON'), 
+                                         ('xml', 'XML')],
                                  default='none')
     optimize_tokens = BooleanField('Optimize Tokens', default=True)
     submit = SubmitField('Optimize')
@@ -33,14 +35,8 @@ def index():
     error = None
 
     if request.method == 'POST':
-        # Check request size before processing form
-        if len(request.get_data()) > app.config['MAX_CONTENT_LENGTH']:
-            return render_template('index.html',
-                                form=form,
-                                error="Input size exceeds 16MB limit. Please reduce the text size."), 413
-
-        if form.validate_on_submit():
-            try:
+        try:
+            if form.validate_on_submit():
                 optimizer = LLMContextOptimizer()
                 structure_format = form.structure_format.data
                 if structure_format == 'none':
@@ -54,23 +50,20 @@ def index():
                     structure_format=structure_format,
                     optimize_tokens=form.optimize_tokens.data
                 )
-            except Exception as e:
-                error = f"Error processing text: {str(e)}"
-        else:
-            error = "Invalid form submission. Please check your input."
+            else:
+                error = "Invalid form submission. Please check your input."
+        except Exception as e:
+            error = f"Error processing text: {str(e)}"
 
     return render_template('index.html', form=form, result=result, error=error)
 
 @app.route('/api/optimize', methods=['POST'])
 def api_optimize():
-    if request.content_length and request.content_length > app.config['MAX_CONTENT_LENGTH']:
-        return jsonify({'error': 'Request too large. Maximum size is 16MB'}), 413
-
-    data = request.json
-    if not data or 'text' not in data:
-        return jsonify({'error': 'No text provided'}), 400
-
     try:
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({'error': 'No text provided'}), 400
+
         optimizer = LLMContextOptimizer()
         result = optimizer.optimize(**data)
         return jsonify(result)

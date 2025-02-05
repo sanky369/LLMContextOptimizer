@@ -162,7 +162,7 @@
                 return false;
             }
 
-            return confirm('Process this text with the selected optimization options?');
+            return true;
         }
     </script>
 </head>
@@ -178,7 +178,7 @@
             Note: Maximum input size is 16MB. For larger texts, please consider splitting them into smaller chunks.
         </div>
 
-        <form method="POST" onsubmit="return validateForm()">
+        <form method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">
             {{ form.csrf_token }}
             <div class="form-group">
                 {{ form.text.label }}
